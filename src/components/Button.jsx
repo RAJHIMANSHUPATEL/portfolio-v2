@@ -1,29 +1,36 @@
-import { Link } from 'react-router-dom';
+import { TLink } from '../motion/PageTransition';
 
-// One button for internal links (to), external/mailto links (href) and real buttons.
+/**
+ * variant: solid | outline
+ * size: md | sm
+ * Use `to` for internal routes (plays the page transition), `href` for
+ * external links, mailto: and downloads.
+ */
 export default function Button({
   to,
   href,
-  variant = 'primary',
+  variant = 'solid',
   size = 'md',
-  icon = null,
+  icon,
+  transitionLabel,
   className = '',
   children,
   ...rest
 }) {
-  const cls = `btn btn-${variant} btn-${size} ${className}`.trim();
-  const content = (
+  const classes = `btn btn-${variant} btn-${size} ${className}`.trim();
+  const inner = (
     <>
-      <span>{children}</span>
-      {icon}
+      <span className="btn-sweep" aria-hidden="true" />
+      <span className="btn-label">{children}</span>
+      {icon ? <span className="btn-icon">{icon}</span> : null}
     </>
   );
 
   if (to) {
     return (
-      <Link to={to} className={cls} {...rest}>
-        {content}
-      </Link>
+      <TLink to={to} label={transitionLabel} className={classes} {...rest}>
+        {inner}
+      </TLink>
     );
   }
 
@@ -32,18 +39,19 @@ export default function Button({
     return (
       <a
         href={href}
-        className={cls}
+        className={classes}
         {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         {...rest}
       >
-        {content}
+        {inner}
+        {external ? <span className="sr-only"> (opens in a new tab)</span> : null}
       </a>
     );
   }
 
   return (
-    <button type="button" className={cls} {...rest}>
-      {content}
+    <button type="button" className={classes} {...rest}>
+      {inner}
     </button>
   );
 }

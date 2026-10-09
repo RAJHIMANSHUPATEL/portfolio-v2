@@ -28,10 +28,10 @@ export const nav = [
 
 // Numbers below are taken directly from the resume and previous portfolio.
 export const proofPoints = [
-  { value: '80%', label: 'fewer Firebase reads after adding a Redis cache layer' },
-  { value: '35%', label: 'lower CPU on a multiplayer game server' },
-  { value: '200', label: 'concurrent 6-player sessions on a single 2 GB server' },
-  { value: '5+', label: 'courier partners behind one internal API' },
+  { value: '80%', label: 'fewer Firebase reads after adding a Redis cache layer', slug: 'performance' },
+  { value: '35%', label: 'lower CPU on a multiplayer game server', slug: 'performance' },
+  { value: '200', label: 'concurrent 6-player sessions on a single 2 GB server', slug: 'performance' },
+  { value: '5+', label: 'courier partners behind one internal API', slug: 'delivery-logistics' },
 ];
 
 export const processSteps = [

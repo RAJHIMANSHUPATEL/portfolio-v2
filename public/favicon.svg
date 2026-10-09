@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#0a0b0d" />
-  <path d="M18 18v28M46 18v28M18 32h28" stroke="#c6ff3d" stroke-width="6" stroke-linecap="round" fill="none" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#ece8df" />
+  <polygon points="13,4 23,14 13,24 3,14" fill="none" stroke="#0a0a0a" stroke-width="2.25" />
+  <polygon points="19,9 28,18 19,27 10,18" fill="#eb2f0f" stroke="#0a0a0a" stroke-width="2.25" />
 </svg>

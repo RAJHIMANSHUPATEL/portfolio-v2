@@ -1,14 +1,14 @@
-// A simple labelled pipeline. Used on case studies to show how a system fits together.
+/** An ordered pipeline of steps, drawn with hairlines. Reads as a numbered list. */
 export default function FlowDiagram({ title, steps }) {
   return (
     <figure className="flow">
-      {title && <figcaption className="flow-title">{title}</figcaption>}
+      <figcaption className="label">{title}</figcaption>
       <ol className="flow-steps">
         {steps.map((step, i) => (
-          <li className="flow-node" key={step.label}>
-            <span className="flow-index">{String(i + 1).padStart(2, '0')}</span>
+          <li key={step.label} className="flow-step">
+            <span className="flow-num">{String(i + 1).padStart(2, '0')}</span>
             <span className="flow-label">{step.label}</span>
-            {step.sub && <span className="flow-sub">{step.sub}</span>}
+            {step.sub ? <span className="flow-sub">{step.sub}</span> : null}
           </li>
         ))}
       </ol>

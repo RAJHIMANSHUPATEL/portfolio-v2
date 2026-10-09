@@ -2,15 +2,15 @@
   <rect x="16" y="14" width="288" height="172" rx="10" fill="#171a1f" stroke="#343a45" stroke-width="1.5"/>
   <rect x="16" y="14" width="56" height="172" rx="10" fill="#1e222a"/>
   <g fill="#2a2f38"><rect x="26" y="30" width="36" height="6" rx="3"/><rect x="26" y="46" width="36" height="6" rx="3"/><rect x="26" y="62" width="36" height="6" rx="3"/></g>
-  <rect x="26" y="78" width="36" height="6" rx="3" fill="#c6ff3d"/>
+  <rect x="26" y="78" width="36" height="6" rx="3" fill="#eb2f0f"/>
   <rect x="86" y="28" width="62" height="38" rx="6" fill="#0a0b0d" stroke="#2a2f38"/>
   <rect x="156" y="28" width="62" height="38" rx="6" fill="#0a0b0d" stroke="#2a2f38"/>
-  <rect x="226" y="28" width="62" height="38" rx="6" fill="#0a0b0d" stroke="#c6ff3d" stroke-opacity=".5"/>
-  <g fill="#c6ff3d" fill-opacity=".85"><rect x="94" y="38" width="22" height="6" rx="3"/><rect x="164" y="38" width="22" height="6" rx="3"/><rect x="234" y="38" width="22" height="6" rx="3"/></g>
+  <rect x="226" y="28" width="62" height="38" rx="6" fill="#0a0b0d" stroke="#eb2f0f" stroke-opacity=".5"/>
+  <g fill="#eb2f0f" fill-opacity=".85"><rect x="94" y="38" width="22" height="6" rx="3"/><rect x="164" y="38" width="22" height="6" rx="3"/><rect x="234" y="38" width="22" height="6" rx="3"/></g>
   <g fill="#2a2f38"><rect x="94" y="50" width="40" height="5" rx="2.5"/><rect x="164" y="50" width="40" height="5" rx="2.5"/><rect x="234" y="50" width="40" height="5" rx="2.5"/></g>
   <g fill="#2a2f38">
     <rect x="86" y="80" width="202" height="10" rx="3" fill="#1e222a"/>
     <rect x="86" y="96" width="202" height="8" rx="3"/><rect x="86" y="110" width="202" height="8" rx="3"/><rect x="86" y="124" width="202" height="8" rx="3"/>
   </g>
-  <g fill="#c6ff3d" fill-opacity=".85"><rect x="86" y="146" width="14" height="28" rx="2"/><rect x="106" y="156" width="14" height="18" rx="2"/><rect x="126" y="138" width="14" height="36" rx="2"/><rect x="146" y="150" width="14" height="24" rx="2"/></g>
+  <g fill="#eb2f0f" fill-opacity=".85"><rect x="86" y="146" width="14" height="28" rx="2"/><rect x="106" y="156" width="14" height="18" rx="2"/><rect x="126" y="138" width="14" height="36" rx="2"/><rect x="146" y="150" width="14" height="24" rx="2"/></g>
 </svg>

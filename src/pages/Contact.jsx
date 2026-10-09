@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { FaGithub, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
-import { LuDownload, LuMapPin } from 'react-icons/lu';
+import { LuArrowUpRight, LuDownload } from 'react-icons/lu';
 import usePageMeta from '../hooks/usePageMeta';
 import { site } from '../data/site';
 import Availability from '../components/Availability';
 import Button from '../components/Button';
 import CopyEmail from '../components/CopyEmail';
+import PageHead from '../components/PageHead';
+import Reveal from '../components/Reveal';
 
 const projectTypes = [
   'Backend / API development',
@@ -17,10 +19,7 @@ const projectTypes = [
 ];
 
 export default function Contact() {
-  usePageMeta(
-    'Contact',
-    'Start a project or ask a question. Email Himanshu Raj Patel or send a short brief using the form.',
-  );
+  usePageMeta('Contact', 'Start a project or ask a question. Email Himanshu Raj Patel or send a short brief using the form.');
 
   // idle | sending | success | error
   const [status, setStatus] = useState('idle');
@@ -46,124 +45,104 @@ export default function Contact() {
 
   return (
     <>
-      <section className="page-hero">
-        <div className="container">
-          <Availability />
-          <h1 className="page-title">Let&apos;s talk about your project</h1>
-          <p className="page-lead">
-            A few sentences about what you&apos;re building and what&apos;s in the way is plenty to
-            get started.
-          </p>
-        </div>
-      </section>
+      <PageHead
+        label="Contact"
+        title={'Let\u2019s talk.'}
+        lead={'A few sentences about what you\u2019re building and what\u2019s in the way is plenty to get started.'}
+      >
+        <Availability />
+      </PageHead>
 
-      <section className="section section-flush-top">
-        <div className="container contact-grid">
-          <aside className="contact-aside" aria-label="Direct contact">
-            <div className="contact-block">
-              <p className="contact-label">Email</p>
-              <CopyEmail large />
-            </div>
+      <section className="contact wrap">
+        <Reveal as="aside" className="contact-aside" aria-label="Direct contact">
+          <div className="contact-block">
+            <p className="label">Email</p>
+            <CopyEmail large />
+          </div>
 
-            <div className="contact-block">
-              <p className="contact-label">Elsewhere</p>
-              <ul className="contact-links">
-                <li>
-                  <a href={site.social.github} target="_blank" rel="noopener noreferrer">
-                    <FaGithub aria-hidden="true" /> GitHub
-                  </a>
-                </li>
-                <li>
-                  <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer">
-                    <FaLinkedinIn aria-hidden="true" /> LinkedIn
-                  </a>
-                </li>
-                <li>
-                  <a href={site.social.twitter} target="_blank" rel="noopener noreferrer">
-                    <FaXTwitter aria-hidden="true" /> X (Twitter)
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div className="contact-block">
+            <p className="label">Elsewhere</p>
+            <ul className="contact-links">
+              <li>
+                <a className="link-u" href={site.social.github} target="_blank" rel="noopener noreferrer">
+                  <FaGithub aria-hidden="true" /> GitHub<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+              <li>
+                <a className="link-u" href={site.social.linkedin} target="_blank" rel="noopener noreferrer">
+                  <FaLinkedinIn aria-hidden="true" /> LinkedIn<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+              <li>
+                <a className="link-u" href={site.social.twitter} target="_blank" rel="noopener noreferrer">
+                  <FaXTwitter aria-hidden="true" /> X<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            </ul>
+          </div>
 
-            <div className="contact-block">
-              <p className="contact-label">Based in</p>
-              <p className="contact-place">
-                <LuMapPin aria-hidden="true" /> {site.location}
-              </p>
-            </div>
+          <div className="contact-block">
+            <p className="label">Based in</p>
+            <p>{site.location}</p>
+          </div>
 
-            <Button
-              href={site.resumePath}
-              variant="ghost"
-              size="sm"
-              icon={<LuDownload aria-hidden="true" />}
-              download="Himanshu_Raj_Patel_Resume.pdf"
-            >
-              Download résumé
-            </Button>
-          </aside>
+          <Button href={site.resumePath} variant="outline" size="sm" download icon={<LuDownload aria-hidden="true" />}>
+            Download r&eacute;sum&eacute;
+          </Button>
+        </Reveal>
 
+        <Reveal className="contact-form-wrap" delay={0.1}>
           <form className="form" onSubmit={onSubmit} noValidate={false}>
-            <input type="hidden" name="_subject" value="New project enquiry from portfolio" />
-            {/* Honeypot: hidden from people, filled by bots. */}
-            <input
-              type="text"
-              name="_gotcha"
-              tabIndex={-1}
-              autoComplete="off"
-              className="hp"
-              aria-hidden="true"
-            />
+            <input type="hidden" name="_subject" value="New project enquiry from the portfolio" />
+            {/* Honeypot: real visitors never see or fill this in. */}
+            <input type="text" name="_gotcha" className="sr-only" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
             <div className="form-row">
-              <label className="field" htmlFor="name">
-                <span>Name</span>
-                <input id="name" name="name" type="text" required autoComplete="name" />
+              <label className="field">
+                <span className="field-label label">Name</span>
+                <input type="text" name="name" required autoComplete="name" />
               </label>
-              <label className="field" htmlFor="email">
-                <span>Email</span>
-                <input id="email" name="email" type="email" required autoComplete="email" />
+              <label className="field">
+                <span className="field-label label">Email</span>
+                <input type="email" name="email" required autoComplete="email" />
               </label>
             </div>
 
-            <label className="field" htmlFor="type">
-              <span>What do you need?</span>
-              <select id="type" name="project_type" defaultValue="" required>
+            <label className="field">
+              <span className="field-label label">What do you need?</span>
+              <select name="project_type" required defaultValue="">
                 <option value="" disabled>
                   Select a project type
                 </option>
-                {projectTypes.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {projectTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
                   </option>
                 ))}
               </select>
             </label>
 
-            <label className="field" htmlFor="message">
-              <span>Tell me about it</span>
+            <label className="field">
+              <span className="field-label label">Tell me about it</span>
               <textarea
-                id="message"
                 name="message"
-                rows={7}
+                rows={5}
                 required
-                placeholder="What are you building, what's the problem, and when do you need it?"
+                placeholder={'What are you building, what\u2019s the problem, and when do you need it?'}
               />
             </label>
 
-            <div className="form-footer">
-              <button type="submit" className="btn btn-primary btn-md" disabled={status === 'sending'}>
-                <span>{status === 'sending' ? 'Sending…' : 'Send message'}</span>
-              </button>
-              <p className="form-status" role="status" aria-live="polite">
-                {status === 'success' && 'Thanks, your message has been sent.'}
-                {status === 'error' &&
-                  `Something went wrong. Please email me directly at ${site.email}.`}
+            <div className="form-foot">
+              <Button type="submit" disabled={status === 'sending'} icon={<LuArrowUpRight aria-hidden="true" />}>
+                {status === 'sending' ? 'Sending\u2026' : 'Send message'}
+              </Button>
+              <p className={`form-status form-${status}`} role="status">
+                {status === 'success' && 'Thanks, your message is in. I\u2019ll reply by email.'}
+                {status === 'error' && `Something went wrong. Please email ${site.email} directly.`}
               </p>
             </div>
           </form>
-        </div>
+        </Reveal>
       </section>
     </>
   );

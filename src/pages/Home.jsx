@@ -1,181 +1,219 @@
-import { Link } from 'react-router-dom';
-import { LuArrowRight } from 'react-icons/lu';
+import { LuArrowDown, LuArrowRight, LuArrowUpRight } from 'react-icons/lu';
 import usePageMeta from '../hooks/usePageMeta';
 import { processSteps, proofPoints, site } from '../data/site';
-import { services } from '../data/services';
 import { featuredProjects } from '../data/projects';
-import Button from '../components/Button';
+import { services } from '../data/services';
+import { experience, education } from '../data/experience';
+import { TLink } from '../motion/PageTransition';
+import { gsap, useGsap, fontsReady, getEntranceDelay, EASE } from '../motion/gsap';
 import Availability from '../components/Availability';
-import SectionHeading from '../components/SectionHeading';
-import ProjectCard from '../components/ProjectCard';
-import ServiceIcon from '../components/ServiceIcon';
-import CopyEmail from '../components/CopyEmail';
+import Button from '../components/Button';
+import Counter from '../components/Counter';
+import LocalTime from '../components/LocalTime';
+import MaskText from '../components/MaskText';
 import Reveal from '../components/Reveal';
+import ScrubText from '../components/ScrubText';
+import WorkIndex from '../components/WorkIndex';
 
-const terminalRows = [
-  { key: 'firebase.reads', value: '-80%', note: 'redis cache layer' },
-  { key: 'gameserver.cpu', value: '-35%', note: 'redis coordination' },
-  { key: 'sessions.concurrent', value: '200', note: '6 players each, 2 GB server' },
-  { key: 'couriers.integrated', value: '5+', note: 'behind one internal API' },
+const statement = [
+  { text: 'I work on the parts of software that' },
+  { text: 'have to keep working:', em: true },
+  { text: 'caching, concurrency, real-time ingestion and the integrations that tie systems together.' },
 ];
+
+function Hero() {
+  // Secondary hero content arrives after the name, then the name drifts away
+  // slightly slower than the page as you scroll.
+  const ref = useGsap((root) => {
+    const rise = root.querySelectorAll('[data-hero-in]');
+    gsap.set(rise, { opacity: 0, y: 24 });
+
+    let live = true;
+    fontsReady.then(() => {
+      if (!live) return;
+      gsap.to(rise, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: EASE.out,
+        stagger: 0.1,
+        delay: getEntranceDelay() + 0.75,
+      });
+    });
+
+    gsap.to(root.querySelector('.hero-name'), {
+      yPercent: -10,
+      ease: 'none',
+      scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true },
+    });
+    gsap.to(root.querySelector('.hero-bottom'), {
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: { trigger: root, start: '55% top', end: 'bottom top', scrub: true },
+    });
+
+    return () => {
+      live = false;
+    };
+  });
+
+  return (
+    <section ref={ref} className="hero" aria-labelledby="hero-title">
+      <div className="wrap hero-top" data-hero-in>
+        <p className="label">{site.role}</p>
+        <p className="label">
+          Bangalore, IN &middot; <LocalTime />
+        </p>
+      </div>
+
+      <div className="wrap hero-stage">
+        <MaskText as="h1" id="hero-title" className="hero-name" mode="load" delay={0.1} stagger={0.12} duration={1.3} text={'Himanshu\nRaj Patel'} />
+        <TLink to="/work/performance" label="Redis performance" className="hero-stamp" data-hero-in>
+          <span className="hero-stamp-num">80%</span>
+          <span className="hero-stamp-copy">fewer Firebase reads after a Redis cache layer</span>
+        </TLink>
+      </div>
+
+      <div className="wrap hero-bottom">
+        <p className="hero-lead" data-hero-in>
+          I build the backend systems that stay fast under load: APIs, real-time pipelines and the
+          integrations around them.
+        </p>
+        <div className="hero-actions" data-hero-in>
+          <Availability />
+          <div className="btn-row">
+            <Button to="/work" transitionLabel="Work" icon={<LuArrowRight aria-hidden="true" />}>
+              See selected work
+            </Button>
+            <Button to="/contact" variant="outline" transitionLabel="Contact">
+              Start a project
+            </Button>
+          </div>
+        </div>
+        <p className="hero-scroll label" data-hero-in aria-hidden="true">
+          Scroll <LuArrowDown />
+        </p>
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   usePageMeta(
-    null,
+    '',
     'Freelance backend and full-stack engineer in Bangalore. APIs, real-time systems, payments and third-party integrations built to stay fast and reliable under load.',
   );
 
+  const now = experience[0];
+  const before = experience[1];
+
   return (
     <>
-      {/* Hero */}
-      <section className="hero">
-        <div className="container hero-grid">
-          <div className="hero-copy">
-            <Availability />
-            <h1 className="hero-title">
-              Backend systems that stay <span className="accent-text">fast under load.</span>
-            </h1>
-            <p className="hero-lead">
-              I&apos;m {site.shortName}, a software engineer in {site.location}. I design and build
-              APIs, real-time systems and integrations for products that can&apos;t afford to be slow
-              or flaky.
-            </p>
-            <div className="hero-actions">
-              <Button to="/contact" icon={<LuArrowRight aria-hidden="true" />}>
-                Start a project
-              </Button>
-              <Button to="/work" variant="ghost">
-                See selected work
-              </Button>
-            </div>
-            <p className="hero-stack">
-              Node.js <span aria-hidden="true">/</span> Go <span aria-hidden="true">/</span>{' '}
-              PostgreSQL <span aria-hidden="true">/</span> Redis <span aria-hidden="true">/</span>{' '}
-              React
-            </p>
-          </div>
+      <Hero />
 
-          <div className="terminal" role="img" aria-label="Summary of measured results from past work">
-            <div className="terminal-bar" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-              <p>impact.log</p>
-            </div>
-            <div className="terminal-body" aria-hidden="true">
-              <p className="terminal-cmd">
-                <span className="prompt">$</span> impact --summary
-              </p>
-              {terminalRows.map((row) => (
-                <p key={row.key} className="terminal-row">
-                  <span className="t-key">{row.key}</span>
-                  <span className="t-value">{row.value}</span>
-                  <span className="t-note"># {row.note}</span>
-                </p>
-              ))}
-              <p className="terminal-cmd">
-                <span className="prompt">$</span> <span className="caret" />
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="proof theme-ink" data-nav-theme="ink" aria-labelledby="proof-title">
+        <div className="wrap">
+          <header className="section-head">
+            <p className="label">(01) Results</p>
+            <MaskText as="h2" id="proof-title" className="display-2" text={'What changed\nafter I shipped.'} />
+          </header>
 
-      {/* Proof */}
-      <section className="section section-tight" aria-label="Results at a glance">
-        <div className="container">
-          <ul className="proof-grid">
-            {proofPoints.map((p, i) => (
-              <Reveal as="li" key={p.label} delay={i * 70} className="proof-item">
-                <span className="proof-value">{p.value}</span>
-                <span className="proof-label">{p.label}</span>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Featured work */}
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Selected work"
-            title="Problems I've solved"
-            intro="A few projects where the engineering made a measurable difference."
-            action={
-              <Link to="/work" className="text-link">
-                All projects <LuArrowRight aria-hidden="true" />
-              </Link>
-            }
-          />
-          <div className="card-grid card-grid-3">
-            {featuredProjects.map((project, i) => (
-              <Reveal key={project.slug} delay={i * 80}>
-                <ProjectCard project={project} />
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section className="section section-alt">
-        <div className="container">
-          <SectionHeading
-            eyebrow="What I do"
-            title="How I can help"
-            intro="Focused on the backend, comfortable owning the whole product when needed."
-            action={
-              <Link to="/services" className="text-link">
-                All services <LuArrowRight aria-hidden="true" />
-              </Link>
-            }
-          />
-          <div className="card-grid card-grid-2">
-            {services.slice(0, 4).map((service, i) => (
-              <Reveal key={service.id} delay={i * 70} className="service-card">
-                <ServiceIcon name={service.icon} />
-                <h3>{service.title}</h3>
-                <p>{service.summary}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Process"
-            title="From first call to launch"
-            intro="A simple, predictable way of working."
-          />
-          <ol className="steps">
-            {processSteps.map((step, i) => (
-              <Reveal as="li" key={step.title} delay={i * 80} className="step">
-                <span className="step-index">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-              </Reveal>
+          <ol className="proof-list">
+            {proofPoints.map((point) => (
+              <li key={point.label}>
+                <Reveal y={20}>
+                  <TLink to={`/work/${point.slug}`} label="Work" className="proof-row">
+                    <Counter value={point.value} className="proof-num" />
+                    <span className="proof-body">
+                      <span className="proof-label">{point.label}</span>
+                      <span className="proof-link label">
+                        Read the case study <LuArrowUpRight aria-hidden="true" />
+                      </span>
+                    </span>
+                  </TLink>
+                </Reveal>
+              </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="section section-tight">
-        <div className="container">
-          <Reveal className="cta-band">
-            <h2>Got a system that&apos;s slow, fragile or not built yet?</h2>
-            <p>Tell me what you&apos;re working on. I&apos;ll tell you honestly whether I can help.</p>
-            <div className="cta-actions">
-              <Button to="/contact" icon={<LuArrowRight aria-hidden="true" />}>
-                Start a project
-              </Button>
-              <CopyEmail />
-            </div>
+      <section className="work-home" aria-labelledby="work-title">
+        <div className="wrap">
+          <header className="section-head">
+            <p className="label">(02) Selected work</p>
+            <MaskText as="h2" id="work-title" className="display-2" text={'Problems I\u2019ve\nsolved.'} />
+          </header>
+          <WorkIndex items={featuredProjects} />
+          <Reveal className="section-foot">
+            <Button to="/work" variant="outline" transitionLabel="Work" icon={<LuArrowRight aria-hidden="true" />}>
+              All case studies
+            </Button>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="about-home" aria-labelledby="about-title">
+        <div className="wrap">
+          <p className="label" id="about-title">
+            (03) About
+          </p>
+          <ScrubText segments={statement} className="statement" />
+
+          <dl className="facts">
+            <Reveal className="fact">
+              <dt className="label">Now</dt>
+              <dd>
+                {now.role}, Krishworks Technologies and Research Labs
+                <span className="fact-sub">{now.period}</span>
+              </dd>
+            </Reveal>
+            <Reveal className="fact" delay={0.08}>
+              <dt className="label">Before</dt>
+              <dd>
+                {before.role}, {before.company.replace(' Pvt. Ltd.', '')}
+                <span className="fact-sub">{before.period}</span>
+              </dd>
+            </Reveal>
+            <Reveal className="fact" delay={0.16}>
+              <dt className="label">Education</dt>
+              <dd>
+                {education[0].detail}, {education[0].school}
+                <span className="fact-sub">{education[0].period}</span>
+              </dd>
+            </Reveal>
+          </dl>
+
+          <Reveal className="section-foot">
+            <Button to="/about" variant="outline" transitionLabel="About" icon={<LuArrowRight aria-hidden="true" />}>
+              More about me
+            </Button>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="services-home" data-nav-theme="raised" aria-labelledby="services-title">
+        <div className="wrap">
+          <header className="section-head">
+            <p className="label">(04) Services</p>
+            <MaskText as="h2" id="services-title" className="display-2" text={'What I can\nbuild for you.'} />
+          </header>
+          <ol className="lines">
+            {services.map((service, i) => (
+              <li key={service.id}>
+                <Reveal y={20}>
+                  <TLink to="/services" label="Services" className="line-row">
+                    <span className="line-idx">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="line-title">{service.title}</span>
+                    <span className="line-text">{service.summary}</span>
+                  </TLink>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+          <p className="process-line label">
+            {processSteps.map((step) => step.title).join('  /  ')}
+          </p>
         </div>
       </section>
     </>

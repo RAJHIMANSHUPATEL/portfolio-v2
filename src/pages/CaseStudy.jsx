@@ -1,42 +1,51 @@
-import { Link, useParams } from 'react-router-dom';
-import { LuArrowLeft, LuArrowRight, LuArrowUpRight } from 'react-icons/lu';
+import { useParams } from 'react-router-dom';
+import { LuArrowUpRight } from 'react-icons/lu';
 import { FaGithub } from 'react-icons/fa6';
 import usePageMeta from '../hooks/usePageMeta';
 import { getProject, projects } from '../data/projects';
-import FlowDiagram from '../components/FlowDiagram';
-import Reveal from '../components/Reveal';
+import { TLink } from '../motion/PageTransition';
+import { getEntranceDelay } from '../motion/gsap';
 import Button from '../components/Button';
+import Counter from '../components/Counter';
+import FlowDiagram from '../components/FlowDiagram';
+import MaskText from '../components/MaskText';
+import ParallaxMedia from '../components/ParallaxMedia';
+import Reveal from '../components/Reveal';
 import NotFound from './NotFound';
 
-function Showcase({ item }) {
+function Showcase({ item, index }) {
   return (
     <article className="showcase">
-      <div className="showcase-media">
-        <img src={item.image} alt="" loading="lazy" />
-      </div>
-      <div className="showcase-body">
-        <h3>{item.title}</h3>
-        <p>{item.summary}</p>
+      <Reveal className="showcase-media-wrap" y={40}>
+        <ParallaxMedia className="showcase-media">
+          <img src={item.image} alt="" width="640" height="400" loading="lazy" decoding="async" />
+        </ParallaxMedia>
+      </Reveal>
 
-        <div className="showcase-links">
+      <div className="showcase-body">
+        <p className="label">App {String(index + 1).padStart(2, '0')}</p>
+        <h3 className="showcase-title">{item.title}</h3>
+        <p className="showcase-text">{item.summary}</p>
+
+        <div className="btn-row">
           {item.portal ? (
             <Button href={item.portal} size="sm" icon={<LuArrowUpRight aria-hidden="true" />}>
               Live demo
             </Button>
           ) : (
-            <span className="badge-soft">Live demo coming soon</span>
+            <span className="soon label">Live demo coming soon</span>
           )}
           {item.github && (
-            <Button href={item.github} variant="ghost" size="sm" icon={<FaGithub aria-hidden="true" />}>
+            <Button href={item.github} variant="outline" size="sm" icon={<FaGithub aria-hidden="true" />}>
               Source
             </Button>
           )}
         </div>
 
         {item.logins?.length > 0 && (
-          <details className="demo-access">
+          <details className="demo">
             <summary>Demo access</summary>
-            <div className="demo-list">
+            <div className="demo-grid">
               {item.logins.map((login) => (
                 <dl key={login.who} className="demo-login">
                   <dt>{login.who}</dt>
@@ -70,132 +79,110 @@ export default function CaseStudy() {
   if (!project) return <NotFound />;
 
   const index = projects.findIndex((p) => p.slug === slug);
-  const prev = projects[(index - 1 + projects.length) % projects.length];
   const next = projects[(index + 1) % projects.length];
 
   return (
     <>
-      <section className="page-hero case-hero">
-        <div className="container">
-          <Link to="/work" className="back-link">
-            <LuArrowLeft aria-hidden="true" /> All work
-          </Link>
-          <p className="eyebrow">{project.context}</p>
-          <h1 className="page-title">{project.title}</h1>
-          <p className="page-lead">{project.tagline}</p>
-        </div>
+      <header className="case-head wrap">
+        <TLink to="/work" label="Work" className="back label">
+          &larr; Index
+        </TLink>
+        <p className="label case-context">
+          {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')} &middot;{' '}
+          {project.context}
+        </p>
+        <MaskText as="h1" mode="load" className="case-title" text={project.title} duration={1.2} stagger={0.1} />
+        <Reveal className="case-tagline" delay={getEntranceDelay() + 0.45} y={20}>
+          {project.tagline}
+        </Reveal>
+
+        <dl className="case-meta">
+          <div>
+            <dt className="label">Role</dt>
+            <dd>{project.role}</dd>
+          </div>
+          <div>
+            <dt className="label">Context</dt>
+            <dd>{project.context}</dd>
+          </div>
+          <div>
+            <dt className="label">Focus</dt>
+            <dd>{project.categories.join(', ')}</dd>
+          </div>
+          <div>
+            <dt className="label">Stack</dt>
+            <dd>{project.stack.join(', ')}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section className="case-results theme-ink" data-nav-theme="ink" aria-label="Results">
+        <ul className="wrap results">
+          {project.results.map((result) => (
+            <li key={result.label} className="result">
+              <Counter value={result.value} className="result-value" />
+              <span className="result-label">{result.label}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="section section-flush-top">
-        <div className="container case-layout">
-          <aside className="case-meta" aria-label="Project details">
-            <dl>
-              <div>
-                <dt>Role</dt>
-                <dd>{project.role}</dd>
-              </div>
-              <div>
-                <dt>Context</dt>
-                <dd>{project.context}</dd>
-              </div>
-              <div>
-                <dt>Focus</dt>
-                <dd>{project.categories.join(', ')}</dd>
-              </div>
-              <div>
-                <dt>Stack</dt>
-                <dd>
-                  <ul className="chips">
-                    {project.stack.map((item) => (
-                      <li key={item} className="chip">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </div>
-            </dl>
-          </aside>
+      <div className="case-body wrap">
+        <section className="case-row" aria-labelledby="problem">
+          <h2 className="label" id="problem">
+            The problem
+          </h2>
+          <Reveal as="p" className="case-problem">
+            {project.problem}
+          </Reveal>
+        </section>
 
-          <div className="case-content">
-            <Reveal as="ul" className="metrics" aria-label="Results">
-              {project.results.map((r) => (
-                <li key={r.label} className="metric">
-                  <span className="metric-value">{r.value}</span>
-                  <span className="metric-label">{r.label}</span>
-                </li>
+        <section className="case-row" aria-labelledby="built">
+          <h2 className="label" id="built">
+            What I built
+          </h2>
+          <ol className="built">
+            {project.built.map((item, i) => (
+              <Reveal as="li" key={item} className="built-item" y={20}>
+                <span className="built-idx">{String(i + 1).padStart(2, '0')}</span>
+                <p>{item}</p>
+              </Reveal>
+            ))}
+          </ol>
+        </section>
+
+        {project.flows?.length > 0 && (
+          <section className="case-row" aria-labelledby="fits">
+            <h2 className="label" id="fits">
+              How it fits together
+            </h2>
+            <Reveal className="flows">
+              {project.flows.map((flow) => (
+                <FlowDiagram key={flow.title} title={flow.title} steps={flow.steps} />
               ))}
             </Reveal>
+          </section>
+        )}
+      </div>
 
-            <Reveal as="section" className="case-block">
-              <h2>The problem</h2>
-              <p>{project.problem}</p>
-            </Reveal>
+      {project.showcases?.length > 0 && (
+        <section className="showcases wrap" aria-labelledby="apps">
+          <h2 className="label" id="apps">
+            The apps
+          </h2>
+          {project.showcases.map((item, i) => (
+            <Showcase key={item.title} item={item} index={i} />
+          ))}
+        </section>
+      )}
 
-            <Reveal as="section" className="case-block">
-              <h2>What I built</h2>
-              <ul className="check-list">
-                {project.built.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </Reveal>
-
-            {project.flows?.length > 0 && (
-              <Reveal as="section" className="case-block">
-                <h2>How it fits together</h2>
-                <div className="flow-stack">
-                  {project.flows.map((flow) => (
-                    <FlowDiagram key={flow.title} title={flow.title} steps={flow.steps} />
-                  ))}
-                </div>
-              </Reveal>
-            )}
-
-            {project.showcases?.length > 0 && (
-              <section className="case-block">
-                <h2>The apps</h2>
-                <div className="showcase-list">
-                  {project.showcases.map((item) => (
-                    <Reveal key={item.title}>
-                      <Showcase item={item} />
-                    </Reveal>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-tight">
-        <div className="container">
-          <nav className="pager" aria-label="More case studies">
-            <Link to={`/work/${prev.slug}`} className="pager-link">
-              <span className="pager-dir">
-                <LuArrowLeft aria-hidden="true" /> Previous
-              </span>
-              <span className="pager-title">{prev.title}</span>
-            </Link>
-            <Link to={`/work/${next.slug}`} className="pager-link is-next">
-              <span className="pager-dir">
-                Next <LuArrowRight aria-hidden="true" />
-              </span>
-              <span className="pager-title">{next.title}</span>
-            </Link>
-          </nav>
-
-          <Reveal className="cta-band">
-            <h2>Need something like this built?</h2>
-            <p>Tell me about your project and I&apos;ll reply with how I&apos;d approach it.</p>
-            <div className="cta-actions">
-              <Button to="/contact" icon={<LuArrowRight aria-hidden="true" />}>
-                Start a project
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <TLink to={`/work/${next.slug}`} label={next.title} className="next theme-ink" data-nav-theme="ink">
+        <span className="wrap next-inner">
+          <span className="label">Next project</span>
+          <span className="next-title">{next.title}</span>
+          <LuArrowUpRight className="next-arrow" aria-hidden="true" />
+        </span>
+      </TLink>
     </>
   );
 }

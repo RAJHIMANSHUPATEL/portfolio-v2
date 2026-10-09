@@ -1,40 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { gsap, ScrollTrigger, useGsap, EASE } from '../motion/gsap';
 
-// Fades content in once it scrolls into view. Respects prefers-reduced-motion.
-export default function Reveal({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) {
-  const ref = useRef(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || !('IntersectionObserver' in window)) {
-      setShown(true);
-      return undefined;
-    }
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+/** Fades and lifts a block into place once, when it enters the viewport. */
+export default function Reveal({ as: Tag = 'div', delay = 0, y = 32, className = '', children, ...rest }) {
+  const ref = useGsap((el) => {
+    gsap.set(el, { opacity: 0, y });
+    const trigger = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 92%',
+      once: true,
+      onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: EASE.out, delay }),
+    });
+    return () => trigger.kill();
+  });
 
   return (
-    <Tag
-      ref={ref}
-      className={`reveal ${shown ? 'is-in' : ''} ${className}`.trim()}
-      style={{ '--delay': `${delay}ms` }}
-      {...rest}
-    >
+    <Tag ref={ref} className={className} {...rest}>
       {children}
     </Tag>
   );
